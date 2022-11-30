@@ -7,13 +7,13 @@ module.exports = {
 
         try {
             if (usuario.email && usuario.senha) {
+             
                 let perfilEncontrado = await perfilModel.findOne({
                     "usuario.email": usuario.email
                 }).select("+usuario.senha").exec() 
 
                 if (perfilEncontrado) {
                     const match = await bcrypt.compare(usuario.senha, perfilEncontrado.usuario.senha)
-
                     if (match) {
                         
                         const token = tokenUtil.gerarToken(JSON.stringify(perfilEncontrado.usuario))
@@ -21,7 +21,8 @@ module.exports = {
                         return {
                             token: token,
                             email: perfilEncontrado.usuario.email,
-                            perfil: perfilEncontrado._id
+                            perfil: perfilEncontrado._id,
+                            nome: perfilEncontrado.nome
                         }
                     } else {
                         throw {

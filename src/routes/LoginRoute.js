@@ -6,11 +6,11 @@ const loginService = require('./../services/LoginService')
 router.post('', async (req, res) => {
     try {
         const resposta = await loginService.autenticar(req.body)
+        console.log(resposta)
         res.json(resposta)
 
     } catch (error) {
-        console.log(JSON.stringify(error))
-        res.status(error.status).json({
+        res.status(500).json({
             message: error.message
         })
     }

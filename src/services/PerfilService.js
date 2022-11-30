@@ -21,10 +21,11 @@ module.exports = {
 
     cadastrar: async (perfil) => {
         try {
+            console.log(perfil)
             perfil.usuario.senha = await bcrypt.hash(perfil.usuario.senha, 10)
-            
+
             let novoPerfil = await perfilModel.create(perfil)
-            novoPerfil.usuario.senha = undefined 
+            novoPerfil.usuario.senha = undefined
 
             return novoPerfil
         } catch (error) {
@@ -34,8 +35,11 @@ module.exports = {
 
     editar: async (id, perfil) => {
         try {
-            return await perfilModel.updateOne({ _id: id },
-                perfil)
+            const { usuario } = await perfilModel.findOne({ _id: id })
+                .select("usuario.senha")
+                .exec()
+            perfil.usuario.senha = usuario.senha
+            return await perfilModel.updateOne({ _id: id }, perfil)
         } catch (error) {
             throw { message: error.message, status: 500 }
         }
